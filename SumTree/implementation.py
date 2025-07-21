@@ -84,4 +84,16 @@ class SumTree:
         
         change = priority - self.__tree[idx] 
         self.__tree[idx] = priority
-        self.__propogate(idx, change) 
+        self.__propogate(idx, change)
+        
+        
+    def find(self, sampling_value : float):
+        idx = self.__retrieve(0, sampling_value)
+        data_idx = idx - (self.__capacity - 1)
+        return (idx, self.__tree[idx], self.__data[data_idx])
+
+    def total(self):
+        return self.__tree[0] 
+    
+        
+        
