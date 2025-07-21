@@ -23,4 +23,23 @@ class SumTree:
         # First capacity - 1 => leaves/actual samples
         # Next  capacity     => the tree's structure
         
+        self.__data = np.array(capacity, dtype = object)   # Actual data
+        self.__write = 0
+        self.__no_of_entries = 0
         
+    
+    def __propogate(self, idx : int, change : int):
+        """
+        Propogates the change of value on the tree, recursively
+
+        Args:
+            idx (int): The index to be updated
+            change (int): The change to be added 
+        """
+        # Get the parent node
+        parent = (idx - 1) // 2
+        self.__tree[parent] += change 
+        
+        if parent != 0:
+            # Recursively update backwards
+            self.__propogate(parent, change) 
