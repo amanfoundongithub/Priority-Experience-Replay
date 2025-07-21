@@ -56,6 +56,7 @@ class SumTree:
         idx = self.__write + self.__capacity - 1
         self.__data[self.__write] = data 
         
+        self.update(idx, priority)
         
         self.__write += 1
         if self.__write >= self.__capacity:
@@ -63,4 +64,14 @@ class SumTree:
         
         self.__no_of_entries+= 1
         if self.__no_of_entries >= self.__capacity:
-            self.__no_of_entries = self.__capacity 
+            self.__no_of_entries = self.__capacity
+    
+    
+    def update(self, idx : int, priority : float):
+        
+        change = priority - self.__tree[idx] 
+        self.__tree[idx] = priority
+        self.__propogate(idx, change) 
+        
+    
+    def 
