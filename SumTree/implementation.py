@@ -43,3 +43,24 @@ class SumTree:
         if parent != 0:
             # Recursively update backwards
             self.__propogate(parent, change) 
+            
+    
+    def add(self, data : object, priority : float):
+        """
+        Adds a data to the tree, with the priority
+
+        Args:
+            data (object): The object to be added
+            priority (float): The priority to be assigned
+        """
+        idx = self.__write + self.__capacity - 1
+        self.__data[self.__write] = data 
+        
+        
+        self.__write += 1
+        if self.__write >= self.__capacity:
+            self.__write = 0
+        
+        self.__no_of_entries+= 1
+        if self.__no_of_entries >= self.__capacity:
+            self.__no_of_entries = self.__capacity 
