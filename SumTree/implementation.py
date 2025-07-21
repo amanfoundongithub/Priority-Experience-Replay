@@ -23,7 +23,7 @@ class SumTree:
         # First capacity - 1 => leaves/actual samples
         # Next  capacity     => the tree's structure
         
-        self.__data = np.array(capacity, dtype = object)   # Actual data
+        self.__data = np.zeros(capacity, dtype = object)   # Actual data
         self.__write = 0
         self.__no_of_entries = 0
         
