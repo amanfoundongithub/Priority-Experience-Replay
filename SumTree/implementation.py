@@ -44,6 +44,19 @@ class SumTree:
             # Recursively update backwards
             self.__propogate(parent, change) 
             
+        
+    def __retrieve(self, idx : int, sampling_value : float):
+        left = 2 * idx + 1
+        right = left + 1
+        
+        if left >= len(self.__tree):
+            return idx 
+
+        if sampling_value <= self.__tree[left]:
+            return self.__retrieve(left, sampling_value)
+        else:
+            return self.__retrieve(right, sampling_value - self.__tree[left])
+            
     
     def add(self, data : object, priority : float):
         """
@@ -72,6 +85,3 @@ class SumTree:
         change = priority - self.__tree[idx] 
         self.__tree[idx] = priority
         self.__propogate(idx, change) 
-        
-    
-    def 
