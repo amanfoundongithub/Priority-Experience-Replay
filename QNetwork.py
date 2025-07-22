@@ -21,3 +21,4 @@ class QNetwork(nn.Module):
     def forward(self, input : torch.Tensor):
         return self.network(input) 
         
+        
