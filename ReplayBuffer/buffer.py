@@ -42,4 +42,12 @@ class PriorityExperienceReplayBuffer:
             indexes.append(idx)
             priorities.append(priority)
         
+        # Compute importance sampling weights
+        probs = np.array(priorities) / total
+        
+        # Normalization for better interpretation
+        weights = (len(self) * probs) ** (-beta)
+        weights /= weights.max() 
+
+        return batch, indexes, weights
         
