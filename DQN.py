@@ -81,6 +81,19 @@ class RLAgentWithPER:
         else: 
             return self.__decide_from_network(state) 
     
+    def store(self, 
+              transistion : object):
+        self.__buffer.add(transistion)
+        
+    
+    def update(self):
+        
+        # If buffer is sub-filled
+        if len(self.__buffer) < self.__batch_size:
+            return 
+
+        # TODO : add code here for training
+    
     
         
         
