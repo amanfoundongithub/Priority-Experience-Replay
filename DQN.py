@@ -94,7 +94,7 @@ class RLAgentWithPER:
         # sampler
         batch, indexes, priorities = self.__buffer.sample(batch_size = self.__batch_size,
                                                           beta = self.__beta)
-        priorities = priorities.to(self.__device)
+        priorities = torch.tensor(priorities, dtype = torch.float32).to(self.__device)
         
         states, actions, rewards, next_states, dones = zip(*batch)
 
@@ -126,5 +126,3 @@ class RLAgentWithPER:
         
     
     
-        
-        
