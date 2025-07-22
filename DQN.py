@@ -1,4 +1,6 @@
 import torch.optim as optim 
+import numpy as np 
+import torch 
 
 from QNetwork import QNetwork
 from ReplayBuffer import PriorityExperienceReplayBuffer
@@ -30,6 +32,7 @@ class RLAgentWithPER:
         
         # Main Q Network 
         self.__main_network = QNetwork(state_dim, action_dim, hidden_dim = hidden_dim).to(device)
+        self.__action_dim   = action_dim
         
         # Target network (for soft updates) & set it to eval mode 
         self.__target_network = QNetwork(state_dim, action_dim, hidden_dim = hidden_dim).to(device)
@@ -56,6 +59,28 @@ class RLAgentWithPER:
                                                        max_priority = max_priority)
         
         self.__trainer = optim.Adam(self.__main_network.parameters(), lr = learning_rate) 
+        
+        
+    def __decide_from_network(self, 
+                              state : np.ndarray):
+        state = torch.tensor(state, dtype=torch.float32).unsqueeze(0).to(self.__device)
+        with torch.no_grad():
+            return self.__main_network(state).argmax().item()
+        
+    def act(self, 
+            state: np.ndarray, 
+            is_train : bool = False):
+        
+        if is_train:
+            if np.random.rand() < self.__epsilon:
+                return np.random.randint(low = 0,
+                                         high = self.__action_dim)
+            
+            else: 
+                return self.__decide_from_network(state) 
+        else: 
+            return self.__decide_from_network(state) 
     
     
+        
         
