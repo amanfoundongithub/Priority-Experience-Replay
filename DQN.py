@@ -74,7 +74,7 @@ class RLAgentWithPER:
         if is_train:
             if np.random.rand() < self.__epsilon:
                 return np.random.randint(low = 0,
-                                         high = self.__action_dim)
+                                         high = self.__action_dim - 1)
             
             else: 
                 return self.__decide_from_network(state) 
