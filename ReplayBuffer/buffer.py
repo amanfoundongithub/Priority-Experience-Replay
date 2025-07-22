@@ -4,19 +4,27 @@ from SumTree import SumTree
 
 class PriorityExperienceReplayBuffer:
     
-    def __init__(self, capacity : int = 5000, alpha : float = 0.6, min_priority : float = 1e-5):
+    def __init__(self, 
+                 capacity : int = 5000, 
+                 alpha : float = 0.6, 
+                 min_priority : float = 1e-5,
+                 max_priority : float = 1.0):
         
         self.__tree = SumTree(capacity)
         self.__capacity = capacity
         
         self.__alpha = alpha 
         self.__eps = min_priority
+        self.__max_priority = max_priority
         
     
-    def add(self, transistion : object, priority : float):
+    def add(self, transistion : object, priority : float = None):
         
-        priority = abs(priority)
-        priority = (priority + self.__eps) ** self.__alpha
+        if priority is None:
+            priority = (self.__max_priority) ** self.__alpha
+        else: 
+            priority = abs(priority)
+            priority = (priority + self.__eps) ** self.__alpha
         
         self.__tree.add(transistion, priority)
     
@@ -56,6 +64,7 @@ class PriorityExperienceReplayBuffer:
         for idx, priority in zip(indexes, priorities):
             priority = (abs(priority) + self.epsilon) ** self.alpha
             self.tree.update(idx, priority)
+            self.__max_priority = max(self.__max_priority, priority) 
     
     def __len__(self):
         return self.__tree._SumTree__no_of_entries
