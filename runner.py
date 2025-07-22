@@ -1,3 +1,3 @@
-from SumTree import *
+from ReplayBuffer import *
 
-test_sumtree_correctness() 
+test_prioritized_replay_buffer()

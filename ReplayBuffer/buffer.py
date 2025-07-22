@@ -50,4 +50,7 @@ class PriorityExperienceReplayBuffer:
         weights /= weights.max() 
 
         return batch, indexes, weights
+    
+    def __len__(self):
+        return self.__tree._SumTree__no_of_entries
         
