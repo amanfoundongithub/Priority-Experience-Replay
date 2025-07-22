@@ -121,8 +121,14 @@ class RLAgentWithPER:
         # Update priorities
         self.__buffer.update(indexes, td_errors.detach().cpu().numpy())
         
+        # Soft update
+        for target_param, param in zip(self.__target_network.parameters(), self.__main_network.parameters()):
+            target_param.data.copy_(self.tau * param.data + (1.0 - self.tau) * target_param.data)
+        
         # Decay epsilon at the end
         self.__epsilon = max(self.__min_eps, self.__epsilon * self.__eps_decay)
+        
+    
         
     
     
