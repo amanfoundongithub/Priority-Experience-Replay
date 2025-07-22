@@ -51,6 +51,12 @@ class PriorityExperienceReplayBuffer:
 
         return batch, indexes, weights
     
+    def update(self, indexes, priorities):
+        
+        for idx, priority in zip(indexes, priorities):
+            priority = (abs(priority) + self.epsilon) ** self.alpha
+            self.tree.update(idx, priority)
+    
     def __len__(self):
         return self.__tree._SumTree__no_of_entries
         
