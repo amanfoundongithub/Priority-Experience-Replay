@@ -1,3 +1,7 @@
-from ReplayBuffer import *
+from DQN import RLAgentWithPER
+import gymnasium as gym 
 
-test_prioritized_replay_buffer()
+env = gym.make("LunarLander-v3")
+
+agent = RLAgentWithPER(env)
+agent.train()

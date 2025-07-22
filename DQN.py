@@ -1,6 +1,7 @@
 import torch.optim as optim 
 import numpy as np 
 import torch 
+import gymnasium as gym 
 
 from QNetwork import QNetwork
 from ReplayBuffer import PriorityExperienceReplayBuffer
@@ -9,8 +10,7 @@ from ReplayBuffer import PriorityExperienceReplayBuffer
 class RLAgentWithPER:
     
     def __init__(self, 
-                 state_dim : int,
-                 action_dim : int,
+                 env : gym.Env,
                  hidden_dim : int = 128,
                  
                  discount_factor : float = 0.99,
@@ -29,6 +29,10 @@ class RLAgentWithPER:
                  eps_decay   : float = 0.99,
                  
                  device : str = "cpu"):
+        
+        self.__env = env 
+        state_dim  = env.observation_space.shape[0]
+        action_dim = env.action_space.n
         
         # Main Q Network 
         self.__main_network = QNetwork(state_dim, action_dim, hidden_dim = hidden_dim).to(device)
@@ -129,6 +133,21 @@ class RLAgentWithPER:
         self.__epsilon = max(self.__min_eps, self.__epsilon * self.__eps_decay)
         
     
+    def train(self, episodes : int = 500):
         
-    
-    
+        for episode in range(1, episodes + 1):
+            
+            state, _ = self.__env.reset()
+            total_episode_reward = 0
+            done = False 
+            
+            while not done:
+                action = self.act(state, is_train = True)
+                next_state, reward, done, _, _ = self.__env.step(action)
+                self.store((state, action, reward, next_state, done))
+                self.update()
+                state = next_state
+                total_episode_reward += reward
+                
+            
+            print(f"Episode {episode}, Return: {total_episode_reward:.2f}, Epsilon: {self.epsilon:.3f}")
