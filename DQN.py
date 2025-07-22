@@ -85,14 +85,45 @@ class RLAgentWithPER:
               transistion : object):
         self.__buffer.add(transistion)
         
-    
     def update(self):
         
         # If buffer is sub-filled
         if len(self.__buffer) < self.__batch_size:
             return 
 
-        # TODO : add code here for training
+        # sampler
+        batch, indexes, priorities = self.__buffer.sample(batch_size = self.__batch_size,
+                                                          beta = self.__beta)
+        priorities = priorities.to(self.__device)
+        
+        states, actions, rewards, next_states, dones = zip(*batch)
+
+        states = torch.tensor(states, dtype=torch.float32).to(self.__device)
+        actions = torch.tensor(actions, dtype=torch.int64).to(self.__device)
+        rewards = torch.tensor(rewards, dtype=torch.float32).to(self.__device)
+        next_states = torch.tensor(next_states, dtype=torch.float32).to(self.__device)
+        dones = torch.tensor(dones, dtype=torch.float32).to(self.__device)
+        
+        # Estimate TD error
+        Q_values = self.__main_network(states).gather(1, actions.unsqueeze(1)).squeeze(1)
+        with torch.no_grad():
+            future_Q_values = self.__target_network(next_states).max(1)[0]
+            targets = rewards + self.__discount_factor * future_Q_values * (1 - dones)
+        
+        td_errors = targets - Q_values
+        loss = (td_errors.pow(2) * priorities).mean()
+        
+        # Trainer
+        self.__trainer.zero_grad()
+        loss.backward()
+        self.__trainer.step()
+        
+        # Update priorities
+        self.__buffer.update(indexes, td_errors.detach().cpu().numpy())
+        
+        # Decay epsilon at the end
+        self.__epsilon = max(self.__min_eps, self.__epsilon * self.__eps_decay)
+        
     
     
         
